@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Authorized WeChat Mirror Fixture</title>
+    <item>
+      <title>Mirror wrapper title</title>
+      <link>https://feeds.example/items/valid</link>
+      <pubDate>Fri, 24 Jul 2026 08:00:00 GMT</pubDate>
+      <description><![CDATA[
+        <section>
+          <div data-wct-type="article-title">原文标题：机器之心的可信文章</div>
+          <div data-wct-type="article-author">原文作者：机器之心</div>
+          <div data-wct-type="article-intro">这是经过目标 biz 与作者双重校验的来源摘要。</div>
+          <a href="http://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw%3D%3D&amp;mid=2651122334&amp;idx=1&amp;sn=validsn">原文链接</a>
+        </section>
+      ]]></description>
+    </item>
+    <item>
+      <title>Wrong account wrapper</title>
+      <link>https://feeds.example/items/wrong-biz</link>
+      <pubDate>Fri, 24 Jul 2026 07:00:00 GMT</pubDate>
+      <description><![CDATA[
+        <section>
+          <div data-wct-type="article-title">原文标题：不属于目标公众号</div>
+          <div data-wct-type="article-author">原文作者：机器之心</div>
+          <a href="https://mp.weixin.qq.com/s?__biz=V1JPTkdCSVpJRA%3D%3D&amp;mid=9&amp;idx=1&amp;sn=wrong">原文链接</a>
+        </section>
+      ]]></description>
+    </item>
+  </channel>
+</rss>

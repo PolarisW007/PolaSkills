@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "defaults": {
+    "lookback_hours": 72,
+    "timeout_seconds": 15,
+    "max_run_seconds": 600,
+    "max_response_bytes": 5242880,
+    "max_pages": 3,
+    "max_articles_per_source": 100,
+    "max_candidates_per_target": 1000,
+    "max_total_candidates": 5000,
+    "fetch_content": true,
+    "max_content_fetches": 10,
+    "max_content_fetches_per_target": 3,
+    "max_sitemap_uncompressed_bytes": 10485760,
+    "retention_days": 30,
+    "baseline_mode": "from_now"
+  },
+  "targets": [
+    {
+      "id": "machineheart",
+      "name": "机器之心",
+      "wxid": "almosthuman2014",
+      "biz": "MzA3MzI4MjgzMw==",
+      "priority": "critical",
+      "enabled": true,
+      "notes": "标准模式只启用发布方官网 sitemap；加 --private-use 后有效开启三来源与 sitemap 正文尝试。",
+      "sources": [
+        {
+          "id": "machineheart-official-sitemap",
+          "type": "sitemap",
+          "url": "https://www.jiqizhixin.com/shared/sitemap.xml.gz",
+          "url_pattern": "^https://(?:www\\.)?jiqizhixin\\.com/articles/\\d{4}-\\d{2}-\\d{2}-[A-Za-z0-9._~-]+/?(?:[?#].*)?$",
+          "published_at_from_url": "/articles/(\\d{4}-\\d{2}-\\d{2})-",
+          "nested_https_url": true,
+          "max_articles": 1000,
+          "fetch_content": false,
+          "fetch_content_in_private_mode": true,
+          "independence_group": "machineheart_official",
+          "completeness": "partial",
+          "enabled": true
+        },
+        {
+          "id": "machineheart-official-rss",
+          "type": "rss",
+          "url": "https://mcp.applications.jiqizhixin.com/rss",
+          "query_from_env": {
+            "token": "MACHINEHEART_RSS_TOKEN"
+          },
+          "max_articles": 100,
+          "fetch_content": true,
+          "permission_required": true,
+          "enable_in_private_mode": true,
+          "independence_group": "machineheart_official",
+          "completeness": "partial",
+          "notes": "标准模式停用；私人模式显式启用。服务端仍要求 MACHINEHEART_RSS_TOKEN，缺失时报告 missing_secret。",
+          "enabled": false
+        },
+        {
+          "id": "xinfinite-permission-gated",
+          "type": "rss",
+          "url": "https://www.xinfinite.net/latest.rss",
+          "entry_link_mode": "wechat_original_from_description",
+          "expected_author": "机器之心",
+          "max_future_hours": 1,
+          "fetch_content": true,
+          "permission_required": true,
+          "enable_in_private_mode": true,
+          "independence_group": "xinfinite_mirror",
+          "completeness": "partial",
+          "notes": "标准模式停用；私人模式启用并继续校验唯一微信原文、作者和 biz。",
+          "enabled": false
+        }
+      ]
+    }
+  ]
+}

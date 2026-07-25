@@ -1,0 +1,14 @@
+{
+  "base_resp": {"ret": 0},
+  "appmsg_list": [
+    {
+      "title": "Fixture WeChat Article",
+      "link": "http://mp.weixin.qq.com/s?__biz=MzI2MTcxMjI0MQ%3D%3D&mid=1001&idx=1&sn=abc&scene=19",
+      "digest": "这是来源提供的短摘要。",
+      "sendtime": 1784764800,
+      "appmsgid": 1001,
+      "itemidx": 1
+    }
+  ],
+  "has_more": 0
+}

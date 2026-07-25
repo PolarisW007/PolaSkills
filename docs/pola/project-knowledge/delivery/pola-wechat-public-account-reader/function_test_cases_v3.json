@@ -1,0 +1,364 @@
+{
+  "source_docs": [
+    "docs/pola/project-knowledge/requirements/2026-07-25-pola-wechat-public-account-reader-v3-private-mode.md",
+    "docs/pola/project-knowledge/specs/2026-07-25-pola-wechat-public-account-reader-v3-private-mode-prd.md",
+    "docs/pola/project-knowledge/architecture/2026-07-25-pola-wechat-public-account-reader-v3-private-mode-sdd.md"
+  ],
+  "features": [
+    {
+      "id": "V3-F1",
+      "name": "V3 文档与 Skill 触发说明",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v3-private-mode.md#验收标准"
+      ],
+      "acceptance_ids": [
+        "A1"
+      ],
+      "risk": "P3",
+      "unit_cases": [
+        {
+          "id": "V3-UT-F1-001",
+          "target": "tests/test_private_mode.py",
+          "scenario": "校验 V3 工程记录和本地 Markdown 链接",
+          "assertions": [
+            "Requirement、PRD、SDD、测试矩阵、测试报告和开发日志存在",
+            "Skill 与 V3 文档的本地 Markdown 链接可解析"
+          ],
+          "expected": "A1 工程记录可从规范源码复核",
+          "command": "python3 -B -m unittest discover -s pola-wechat-public-account-reader/tests -p 'test_private_mode.py' -v"
+        },
+        {
+          "id": "V3-UT-F1-002",
+          "target": "pola-wechat-public-account-reader/SKILL.md",
+          "scenario": "校验私人模式能力、用法、机器之心案例和 Skill 元数据",
+          "assertions": [
+            "SKILL.md 说明 enforced/private_opt_in",
+            "SKILL.md frontmatter 符合 Skill 规范",
+            "quick_validate.py 退出码为 0"
+          ],
+          "expected": "用户能从 Skill 入口定位私人模式配置、命令和边界",
+          "command": "python3 -B ~/.codex/skills/.system/skill-creator/scripts/quick_validate.py pola-wechat-public-account-reader"
+        }
+      ],
+      "integration_cases": [],
+      "regression_cases": []
+    },
+    {
+      "id": "V3-F2",
+      "name": "双来源策略与有效来源选择",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v3-private-mode.md#验收标准"
+      ],
+      "acceptance_ids": [
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "V3-UT-F2-001",
+          "target": "tests/test_private_mode.py",
+          "scenario": "默认 enforced、非法策略和严格布尔校验",
+          "assertions": [
+            "旧配置缺省为 enforced",
+            "enforced 下缺引用的启用来源联网前失败",
+            "非法策略和字符串布尔值被拒绝"
+          ],
+          "expected": "旧任务行为不静默改变",
+          "command": "python3 -B -m unittest discover -s pola-wechat-public-account-reader/tests -p 'test_private_mode.py' -v"
+        },
+        {
+          "id": "V3-UT-F2-002",
+          "target": "scripts/pola_wechat_reader/config.py",
+          "scenario": "private_opt_in 只启用显式私人来源",
+          "assertions": [
+            "enable_in_private_mode=true 的来源有效启用",
+            "普通停用来源保持停用",
+            "停用 target 保持停用",
+            "空 permission_reference 产生 warning 和 override"
+          ],
+          "expected": "私人模式开放来源但不破坏运维 enabled 语义",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [],
+      "regression_cases": []
+    },
+    {
+      "id": "V3-F3",
+      "name": "机器之心三来源、正文预算与内容真实性",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v3-private-mode.md#验收标准"
+      ],
+      "acceptance_ids": [
+        "A5",
+        "A6",
+        "A7",
+        "A8"
+      ],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "V3-UT-F3-001",
+          "target": "assets/targets.machineheart.private.json",
+          "scenario": "离线归一化机器之心私人资产",
+          "assertions": [
+            "sitemap、官方 RSS 和 xInfinite 三个来源有效启用",
+            "sitemap 正文私人开关有效",
+            "两个 permission override 可追溯",
+            "所有来源 completeness 保持 partial"
+          ],
+          "expected": "私人资产可直接复制并明确显示三来源全开",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/wechat_monitor.py validate --config pola-wechat-public-account-reader/assets/targets.machineheart.private.json"
+        },
+        {
+          "id": "V3-UT-F3-002",
+          "target": "tests/test_private_mode.py",
+          "scenario": "官方 RSS 缺 Token 与公开 feed 同批运行",
+          "assertions": [
+            "官方 RSS error_code=missing_secret",
+            "公开 RSS 继续发现文章",
+            "批次为 degraded 而不是 failed",
+            "Token 不出现在请求、报告或错误"
+          ],
+          "expected": "服务端鉴权失败隔离在单个来源",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        },
+        {
+          "id": "V3-UT-F3-003",
+          "target": "tests/test_v2.py",
+          "scenario": "私人模式不改变内容和身份校验",
+          "assertions": [
+            "xInfinite 条目要求唯一微信 URL、作者和 biz",
+            "publisher_data_service_gate 保持 blocked",
+            "CAPTCHA 不进入摘要",
+            "正文仍受逐目标和全局预算"
+          ],
+          "expected": "放宽来源策略不会产生错误正文或归属",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "V3-IT-F3-001",
+          "target": "scripts/run_harness.py",
+          "scenario": "显式私人公网 smoke",
+          "assertions": [
+            "xInfinite 至少返回一条 biz 匹配的机器之心文章",
+            "没有 Token 时官方 RSS 为预期 missing_secret",
+            "抽样微信正文 valid 或 blocked，不接受非正文页"
+          ],
+          "expected": "live_private_status=pass，外部结构退化时退出码为 2",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py --live-private"
+        }
+      ],
+      "regression_cases": []
+    },
+    {
+      "id": "V3-F4",
+      "name": "CLI、报告与 cron 可复现性",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v3-private-mode.md#验收标准"
+      ],
+      "acceptance_ids": [
+        "A9",
+        "A10"
+      ],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "V3-UT-F4-001",
+          "target": "tests/test_private_mode.py",
+          "scenario": "validate、run、cron 解析和显示 private-use",
+          "assertions": [
+            "三个命令接受 --private-use",
+            "validate 输出策略和三个审计清单",
+            "cron 生成命令只含一个 --private-use",
+            "cron 仍只打印不安装"
+          ],
+          "expected": "一次性覆盖与定时运行使用相同来源策略",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        },
+        {
+          "id": "V3-UT-F4-002",
+          "target": "scripts/pola_wechat_reader/reporting.py",
+          "scenario": "JSON/Markdown 显示私人策略",
+          "assertions": [
+            "selection.source_permission_policy=private_opt_in",
+            "permission_overrides 不包含 secret",
+            "Markdown 显示策略及三个审计清单的来源标识"
+          ],
+          "expected": "私人模式不静默运行且报告可安全渲染",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [],
+      "regression_cases": []
+    },
+    {
+      "id": "V3-F5",
+      "name": "技术安全门禁不退化",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v3-private-mode.md#验收标准"
+      ],
+      "acceptance_ids": [
+        "A11"
+      ],
+      "risk": "P1",
+      "unit_cases": [
+        {
+          "id": "V3-UT-F5-001",
+          "target": "tests/test_private_mode.py",
+          "scenario": "私人模式输入仍经过 URL 和 secret 校验",
+          "assertions": [
+            "私网、URL credentials 和 inline Token 被拒绝",
+            "Cookie header 被拒绝",
+            "鉴权请求不能跨 origin",
+            "错误不泄漏环境变量值"
+          ],
+          "expected": "私人模式只放宽来源许可策略",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "V3-IT-F5-001",
+          "target": "tests/test_http_security.py",
+          "scenario": "传输、容量和 deadline 回归",
+          "assertions": [
+            "DNS pin 和 SSRF 门禁通过",
+            "响应、gzip、分页、候选和正文有上限",
+            "slow-trickle 被绝对 deadline 中止",
+            "运行锁和 SQLite 事务保持"
+          ],
+          "expected": "扩大来源集合不会扩大到本机网络或无界任务",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "regression_cases": []
+    },
+    {
+      "id": "V3-F6",
+      "name": "旧配置、四宿主和 Codex 安装态回归",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v3-private-mode.md#验收标准"
+      ],
+      "acceptance_ids": [
+        "A12"
+      ],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "V3-UT-F6-001",
+          "target": "tests",
+          "scenario": "运行全部离线 Harness",
+          "assertions": [
+            "V2 70 项回归继续通过",
+            "V3 私人模式新增测试通过",
+            "Album、Homepage、RSS、sitemap、JSON API 和 SQLite 保持",
+            "四宿主安装器保持幂等与冲突拒绝"
+          ],
+          "expected": "OFFLINE_HARNESS_OK",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "V3-IT-F6-001",
+          "target": "~/.codex/skills/pola-wechat-public-account-reader",
+          "scenario": "从 Codex 安装链接运行最终 Harness",
+          "assertions": [
+            "链接仍指向 PolaSkills 规范源码",
+            "安装路径离线 Harness 通过",
+            "private asset 从安装路径 validate 通过"
+          ],
+          "expected": "Codex 立即使用 V3，其他宿主目录结构不变",
+          "command": "python3 -B ~/.codex/skills/pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "regression_cases": []
+    }
+  ],
+  "coverage": [
+    {
+      "acceptance_id": "A1",
+      "case_ids": [
+        "V3-UT-F1-001",
+        "V3-UT-F1-002"
+      ]
+    },
+    {
+      "acceptance_id": "A2",
+      "case_ids": [
+        "V3-UT-F2-001"
+      ]
+    },
+    {
+      "acceptance_id": "A3",
+      "case_ids": [
+        "V3-UT-F2-002"
+      ]
+    },
+    {
+      "acceptance_id": "A4",
+      "case_ids": [
+        "V3-UT-F2-002"
+      ]
+    },
+    {
+      "acceptance_id": "A5",
+      "case_ids": [
+        "V3-UT-F3-001",
+        "V3-UT-F3-003"
+      ]
+    },
+    {
+      "acceptance_id": "A6",
+      "case_ids": [
+        "V3-UT-F3-001",
+        "V3-IT-F3-001"
+      ]
+    },
+    {
+      "acceptance_id": "A7",
+      "case_ids": [
+        "V3-UT-F3-002",
+        "V3-IT-F3-001"
+      ]
+    },
+    {
+      "acceptance_id": "A8",
+      "case_ids": [
+        "V3-UT-F3-003",
+        "V3-IT-F3-001"
+      ]
+    },
+    {
+      "acceptance_id": "A9",
+      "case_ids": [
+        "V3-UT-F4-002"
+      ]
+    },
+    {
+      "acceptance_id": "A10",
+      "case_ids": [
+        "V3-UT-F4-001"
+      ]
+    },
+    {
+      "acceptance_id": "A11",
+      "case_ids": [
+        "V3-UT-F5-001",
+        "V3-IT-F5-001"
+      ]
+    },
+    {
+      "acceptance_id": "A12",
+      "case_ids": [
+        "V3-UT-F6-001",
+        "V3-IT-F6-001"
+      ]
+    }
+  ]
+}

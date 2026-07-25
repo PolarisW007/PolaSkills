@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Fixture Feed</title>
+    <item>
+      <title>Fixture Media Article</title>
+      <link>https://news.example/articles/one?utm_source=test</link>
+      <guid>fixture-one</guid>
+      <pubDate>Thu, 23 Jul 2026 08:00:00 GMT</pubDate>
+      <description><![CDATA[<p>这是来自 RSS 的确定性来源摘要。</p>]]></description>
+    </item>
+  </channel>
+</rss>

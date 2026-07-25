@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pola 微信公众号批量情报监控"
+  short_description: "批量监控公众号与媒体，支持私人 RSS 全来源模式和可信摘要"
+  default_prompt: "Use $pola-wechat-public-account-reader to monitor my public-account list and summarize verified updates. Keep the default enforced source policy unless I explicitly request private RSS or private_opt_in mode."

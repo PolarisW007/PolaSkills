@@ -1,0 +1,344 @@
+{
+  "source_docs": [
+    "docs/pola/project-knowledge/requirements/2026-07-25-pola-wechat-public-account-reader-v2.md",
+    "docs/pola/project-knowledge/specs/2026-07-25-pola-wechat-public-account-reader-v2-prd.md",
+    "docs/pola/project-knowledge/architecture/2026-07-25-pola-wechat-public-account-reader-v2-sdd.md"
+  ],
+  "features": [
+    {
+      "id": "F1",
+      "name": "V2 文档、能力说明与案例",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v2.md#验收标准"
+      ],
+      "acceptance_ids": ["A1", "A10"],
+      "risk": "P3",
+      "unit_cases": [
+        {
+          "id": "UT-F1-001",
+          "target": "pola-wechat-public-account-reader/SKILL.md",
+          "scenario": "校验 Skill frontmatter、宿主元数据和本地文档链接",
+          "assertions": [
+            "quick_validate.py 退出码为 0",
+            "能力、用法和案例文档存在",
+            "SKILL.md 引用的相对文档可解析"
+          ],
+          "expected": "四宿主目录可安全检查/安装同一规范 Skill；实际发现由各宿主 smoke 确认",
+          "command": "python3 ~/.codex/skills/.system/skill-creator/scripts/quick_validate.py pola-wechat-public-account-reader"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "IT-F1-001",
+          "target": "pola-wechat-public-account-reader/assets",
+          "scenario": "离线校验普通、批量和机器之心三份配置案例",
+          "assertions": [
+            "三份 JSON 均通过 validate",
+            "受限 RSS 和第三方镜像保持 disabled"
+          ],
+          "expected": "案例可直接复制且不会误启用受限来源",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "regression_cases": []
+    },
+    {
+      "id": "F2",
+      "name": "批量配置与运行筛选",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v2.md#验收标准"
+      ],
+      "acceptance_ids": ["A2", "A3"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "UT-F2-001",
+          "target": "tests/test_v2.py",
+          "scenario": "严格校验布尔值、重复 source key 和批量容量",
+          "assertions": [
+            "字符串 true/false 被拒绝",
+            "同 target 重复 source id 被拒绝",
+            "100 target 和每 target 10 source 上限保持"
+          ],
+          "expected": "批量配置在联网前确定性失败或通过",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        },
+        {
+          "id": "UT-F2-002",
+          "target": "scripts/wechat_monitor.py",
+          "scenario": "解析可重复的 target、exclude-target 和 priority 参数",
+          "assertions": [
+            "多个同类过滤器形成并集",
+            "不同过滤器取交集并应用排除项",
+            "显式 disabled、未知 ID 和空选择在联网前失败"
+          ],
+          "expected": "过滤只缩小启用目标集合",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [],
+      "regression_cases": []
+    },
+    {
+      "id": "F3",
+      "name": "目标失败隔离与正文公平预算",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v2.md#验收标准"
+      ],
+      "acceptance_ids": ["A4"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "UT-F3-001",
+          "target": "tests/test_v2.py",
+          "scenario": "critical 优先、同优先级轮询和每目标正文上限",
+          "assertions": [
+            "critical 目标先取得预算",
+            "同优先级目标轮询",
+            "每目标和全局预算都不超限"
+          ],
+          "expected": "前置大号不能饿死后续关键目标",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "IT-F3-001",
+          "target": "scripts/pola_wechat_reader/runner.py",
+          "scenario": "三个目标中间一个来源失败",
+          "assertions": [
+            "前后两个健康目标继续运行",
+            "总运行降级并保留两个目标的新文章",
+            "失败目标写入 errors"
+          ],
+          "expected": "目标间失败隔离",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "regression_cases": []
+    },
+    {
+      "id": "F4",
+      "name": "机器之心与授权 RSS",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v2.md#验收标准"
+      ],
+      "acceptance_ids": ["A5", "A6"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "UT-F4-001",
+          "target": "tests/fixtures/rss-wechat-embedded.xml",
+          "scenario": "授权 RSS description 提取唯一微信原文",
+          "assertions": [
+            "biz、作者、mid 和原文 URL 校验",
+            "错误账号条目被拒绝",
+            "feed URL 保留为 source_url",
+            "被拒条目或当前窗口空 URL 不得形成 observed_zero"
+          ],
+          "expected": "转载/聚合条目不会误归属目标公众号",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        },
+        {
+          "id": "UT-F4-002",
+          "target": "scripts/pola_wechat_reader/parsers.py",
+          "scenario": "有界解析机器之心 gzip sitemap",
+          "assertions": [
+            "双 URL 前缀被安全提取",
+            "只接受锚定官网文章 URL",
+            "候选按 URL 日期排序且数量有上限",
+            "DOCTYPE、坏 gzip 和解压超限被拒绝"
+          ],
+          "expected": "官方 sitemap 可做低频部分覆盖审计",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "IT-F4-001",
+          "target": "assets/targets.machineheart.json",
+          "scenario": "真实公网机器之心近 30 天 dry run",
+          "assertions": [
+            "官方 sitemap status=ok",
+            "候选使用官网 HTTPS URL 和 URL 日期",
+            "coverage=partial",
+            "免费 RSS 和 xInfinite 未被访问"
+          ],
+          "expected": "免费默认路径只提供官网元数据，不冒充公众号完整历史",
+          "manual_verification": "运行 --target machineheart --lookback-hours 720 --backfill --dry-run 并检查 latest.json"
+        }
+      ],
+      "regression_cases": [
+        {
+          "id": "RT-F4-001",
+          "target": "scripts/pola_wechat_reader/article_parser.py",
+          "scenario": "机器之心文章库/数据服务提示页返回 HTTP 200",
+          "assertions": [
+            "content_status=blocked",
+            "reason=publisher_data_service_gate",
+            "提示页文本不进入摘要"
+          ],
+          "expected": "不把发布方访问门禁当成正文",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ]
+    },
+    {
+      "id": "F5",
+      "name": "URL、Secret 与报告语义",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v2.md#验收标准"
+      ],
+      "acceptance_ids": ["A7", "A8"],
+      "risk": "P1",
+      "unit_cases": [
+        {
+          "id": "UT-F5-001",
+          "target": "tests/test_v2.py",
+          "scenario": "候选公网 HTTPS、凭据和授权门禁",
+          "assertions": [
+            "javascript、私网、本地域名和 URL credentials 被拒绝",
+            "非法 hostname、敏感候选 query 被拒绝且公网 IPv6 保留合法方括号",
+            "非微信域名伪造 __biz/mid/idx/sn 不能获得 verified 或 wx 去重键",
+            "敏感 query 必须从环境变量注入",
+            "缺少 permission_reference 的启用来源不联网"
+          ],
+          "expected": "恶意候选和未授权来源不进入状态或报告",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        },
+        {
+          "id": "UT-F5-002",
+          "target": "scripts/pola_wechat_reader/reporting.py",
+          "scenario": "混合健康/失败结果和 Markdown 注入",
+          "assertions": [
+            "result=coverage_incomplete",
+            "target status=partial_observation",
+            "标题、名称、摘要和文章链接 Markdown 被转义"
+          ],
+          "expected": "批量报告不夸大覆盖且可安全渲染",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "IT-F5-001",
+          "target": "scripts/pola_wechat_reader/http_client.py",
+          "scenario": "环境 query token 遇到 HTTP 错误和跨 origin 重定向",
+          "assertions": [
+            "错误 URL 移除 query/fragment",
+            "Token 不进入 exception、cause/context、JSON、Markdown 或 SQLite",
+            "secret-bearing 请求不能跨 origin"
+          ],
+          "expected": "运行证据不泄漏凭据",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "regression_cases": []
+    },
+    {
+      "id": "F6",
+      "name": "四宿主目录兼容与 Codex 安装修复",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v2.md#验收标准"
+      ],
+      "acceptance_ids": ["A9"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "UT-F6-001",
+          "target": "tests/test_host_compat.py",
+          "scenario": "临时 HOME 下检查和安装四宿主链接",
+          "assertions": [
+            "默认检查只读",
+            "显式 apply 安装绝对链接",
+            "真实目录和异源有效链接拒绝覆盖",
+            "精确断链只在 repair 模式修复"
+          ],
+          "expected": "四宿主共享同一规范源码且安装安全",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "IT-F6-001",
+          "target": "~/.codex/skills/pola-wechat-public-account-reader",
+          "scenario": "修复 Codex 旧断链并从安装路径运行 harness",
+          "assertions": [
+            "realpath 指向 PolaSkills 规范源码",
+            "read-only check status=ready",
+            "安装路径离线 harness 通过"
+          ],
+          "expected": "Codex 使用 V2 Skill",
+          "command": "python3 -B ~/.codex/skills/pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "regression_cases": []
+    },
+    {
+      "id": "F7",
+      "name": "旧功能回归与全量 Harness",
+      "source_refs": [
+        "requirements/2026-07-25-pola-wechat-public-account-reader-v2.md#验收标准"
+      ],
+      "acceptance_ids": ["A11", "A12"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "UT-F7-001",
+          "target": "tests",
+          "scenario": "运行全部离线测试",
+          "assertions": [
+            "Album、Homepage、普通 RSS、article URL 和 JSON API 回归",
+            "SQLite 迁移、去重、事务、锁和留存回归",
+            "RSS/sitemap 根与 JSON list_path 变化不会误报 observed_zero",
+            "批量、机器之心、安全和宿主新增测试通过"
+          ],
+          "expected": "离线 harness 输出 OFFLINE_HARNESS_OK",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "IT-F7-001",
+          "target": "scripts/run_harness.py",
+          "scenario": "显式公网 smoke",
+          "assertions": [
+            "Album 和 Homepage 返回文章且 biz 匹配",
+            "机器之心官方 sitemap 返回有日期的官网文章",
+            "微信正文 CAPTCHA 被准确阻断"
+          ],
+          "expected": "live_status=pass，或外部退化时退出码 2",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py --live"
+        }
+      ],
+      "regression_cases": [
+        {
+          "id": "RT-F7-001",
+          "target": "tests/test_runtime.py",
+          "scenario": "旧 version=1 单目标配置和 SQLite 行为",
+          "assertions": [
+            "旧配置无需迁移",
+            "第二次运行不重复报告",
+            "已有状态按 target 隔离"
+          ],
+          "expected": "V1 用户路径保持兼容",
+          "command": "python3 -B pola-wechat-public-account-reader/scripts/run_harness.py"
+        }
+      ]
+    }
+  ],
+  "coverage": [
+    {"acceptance_id": "A1", "case_ids": ["UT-F1-001", "IT-F1-001"]},
+    {"acceptance_id": "A2", "case_ids": ["UT-F2-001"]},
+    {"acceptance_id": "A3", "case_ids": ["UT-F2-002"]},
+    {"acceptance_id": "A4", "case_ids": ["UT-F3-001", "IT-F3-001"]},
+    {"acceptance_id": "A5", "case_ids": ["UT-F4-002", "IT-F4-001"]},
+    {"acceptance_id": "A6", "case_ids": ["UT-F4-001"]},
+    {"acceptance_id": "A7", "case_ids": ["UT-F5-001", "IT-F5-001"]},
+    {"acceptance_id": "A8", "case_ids": ["UT-F5-002"]},
+    {"acceptance_id": "A9", "case_ids": ["UT-F6-001", "IT-F6-001"]},
+    {"acceptance_id": "A10", "case_ids": ["UT-F1-001", "IT-F1-001"]},
+    {"acceptance_id": "A11", "case_ids": ["UT-F7-001", "RT-F7-001"]},
+    {"acceptance_id": "A12", "case_ids": ["UT-F7-001", "IT-F7-001"]}
+  ]
+}

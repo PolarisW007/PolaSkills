@@ -1,0 +1,19 @@
+{
+  "base_resp": {"ret": 0},
+  "getalbum_resp": {
+    "base_info": {
+      "title": "Fixture Album",
+      "nickname": "Fixture Account"
+    },
+    "continue_flag": "1",
+    "article_list": [
+      {
+        "title": "Fixture WeChat Article",
+        "url": "http://mp.weixin.qq.com/s?__biz=MzI2MTcxMjI0MQ%3D%3D&mid=1001&idx=1&sn=abc",
+        "create_time": "1784764800",
+        "msgid": "1001",
+        "itemidx": "1"
+      }
+    ]
+  }
+}

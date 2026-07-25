@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "defaults": {
+    "lookback_hours": 72,
+    "timeout_seconds": 15,
+    "max_run_seconds": 600,
+    "max_response_bytes": 5242880,
+    "max_pages": 3,
+    "max_total_candidates": 5000,
+    "fetch_content": true,
+    "max_content_fetches": 10,
+    "retention_days": 30,
+    "baseline_mode": "from_now"
+  },
+  "targets": [
+    {
+      "id": "instachina",
+      "name": "InsDaily",
+      "wxid": "instachina",
+      "biz": "MzI2MTcxMjI0MQ==",
+      "priority": "normal",
+      "enabled": false,
+      "notes": "启用前填写已验证的公开 Album、Homepage、官网 RSS 或远程 provider；仅有 biz 不能免费枚举完整历史。",
+      "sources": []
+    },
+    {
+      "id": "public-album-demo",
+      "name": "SlowGrowth.慢速生长公开合集演示",
+      "biz": "MzI0NTU3NTc5Ng==",
+      "priority": "low",
+      "enabled": true,
+      "sources": [
+        {
+          "type": "wechat_album",
+          "album_id": "4482506796406177793",
+          "is_reverse": "0",
+          "independence_group": "wechat_public",
+          "enabled": true
+        }
+      ]
+    }
+  ]
+}
