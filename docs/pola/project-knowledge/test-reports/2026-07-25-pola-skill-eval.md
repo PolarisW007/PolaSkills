@@ -18,7 +18,7 @@ artifact: test-evidence
 | A8 | 30 次静态性能探针和小于 15 秒的端到端预算 | Pass |
 | A9 | Skill 校验、Python 编译、20 项单测和 harness | Pass |
 | A10 | 干净发布分支的 JSON、`git diff --cached --check`、secret 和缓存扫描 | Pass |
-| A11 | 基于最新 main 的独立分支，只发布目标子目录和匹配工程记录 | Pending publish |
+| A11 | 分支 `agent/pola-skill-eval` 与 Draft PR #2 只包含目标子目录和匹配工程记录 | Pass |
 | A12 | Requirement、PRD、SDD、测试矩阵、本报告和开发日志齐备 | Pass |
 
 完整测试矩阵：`delivery/pola-skill-eval/function_test_cases.json`
@@ -90,3 +90,9 @@ run_matrix.py --execute
 - 静态模式扫描不能证明没有混淆或间接恶意行为。
 - fake Agent 能证明 harness 正确性，真实宿主仍需实现并验证 runner adapter。
 - 小样本的真实模型评测可能有随机性，应使用 holdout 和至少三次 trial。
+
+## GitHub 证据
+
+- 实现提交：`098b540`
+- Draft PR：`https://github.com/PolarisW007/PolaSkills/pull/2`
+- 分支 diff 已基于最新 `main` 检查，没有源工作树的其它项目或脏改动。

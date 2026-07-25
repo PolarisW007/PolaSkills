@@ -54,7 +54,9 @@ artifact: finalization
 
 - 源 `PolaSkills` 工作树存在大量用户既有无关改动；本次不会暂存或提交它们。
 - GitHub 目标：`PolarisW007/PolaSkills`。发布使用独立干净临时 clone，只复制并提交 `pola-skill-eval/` 与本次 Requirement、PRD、SDD、测试矩阵、测试报告、开发日志和索引事实。
-- commit ID 和 URL 在完成远端验证后补记。
+- 实现 commit：`098b540`。
+- Draft PR：`https://github.com/PolarisW007/PolaSkills/pull/2`。
+- 远端分支：`agent/pola-skill-eval`，基于最新 `main`。
 - 未同步钉钉或其它外部系统；用户没有授权该类外部写入，保留为未执行项。
 
 ## 回滚
