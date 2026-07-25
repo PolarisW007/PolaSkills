@@ -12,6 +12,7 @@
 - 禁止产物检查：源码中 key JSON、DB、加密包均为 0。
 - scoped secret scan 与 `git diff --check`：通过。
 - Codex 安装链接后的 Harness：7/7 通过。
+- GitHub branch push 与 Draft PR #1 创建成功；远端回读作为发布后最终门禁。
 
 ## 回归与残余风险
 

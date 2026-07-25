@@ -14,7 +14,9 @@
 - Python 编译、合成 Harness 7/7、skill validator、YAML、secret scan、`git diff --check` 均通过。
 - Codex 已链接到版本化源码；旧技能整体迁入 `~/.local/share/pola-wechat-record-export/legacy-skill-20260725`，目录为 0700。
 - 旧目录中的 2 个 root-owned key JSON 未读取、未复制、未提交；源码 key 文件计数为 0。
-- GitHub commit/PR 证据将在发布完成后记录。
+- GitHub 分支 `agent/pola-wechat-record-export-v2` 已推送；首个 commit：
+  `c7d10e51d05c958cc30bc10dda9a731572a681fe`。
+- Draft PR：`https://github.com/PolarisW007/PolaSkills/pull/1`，目标 `main`。
 
 ## 不影响功能使用
 
