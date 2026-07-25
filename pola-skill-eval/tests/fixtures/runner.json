@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "{config_dir}/../fake_agent.py",
+    "--skill-path",
+    "{skill_path}",
+    "--prompt-file",
+    "{prompt_file}",
+    "--workspace",
+    "{workspace}",
+    "--response-file",
+    "{response_file}",
+    "--trace-file",
+    "{trace_file}",
+    "--arm",
+    "{arm}",
+    "--case-id",
+    "{case_id}",
+    "--trial",
+    "{trial}"
+  ],
+  "env": {
+    "POLA_EVAL_OFFLINE": "1"
+  }
+}

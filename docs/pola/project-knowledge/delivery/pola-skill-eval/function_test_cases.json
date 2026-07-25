@@ -1,0 +1,266 @@
+{
+  "source_docs": [
+    "docs/pola/project-knowledge/requirements/2026-07-25-pola-skill-eval.md",
+    "docs/pola/project-knowledge/specs/2026-07-25-pola-skill-eval-prd.md",
+    "docs/pola/project-knowledge/architecture/2026-07-25-pola-skill-eval-sdd.md"
+  ],
+  "features": [
+    {
+      "id": "PSE-F1",
+      "name": "Skill 规范与渐进披露",
+      "source_refs": ["requirements/2026-07-25-pola-skill-eval.md#验收标准"],
+      "acceptance_ids": ["A1", "A2"],
+      "risk": "P3",
+      "unit_cases": [
+        {
+          "id": "PSE-UT-F1-001",
+          "target": "pola-skill-eval/SKILL.md",
+          "scenario": "校验 Skill frontmatter、目录和正文长度",
+          "assertions": [
+            "quick_validate.py 退出码为 0",
+            "frontmatter 只包含 name 和 description",
+            "SKILL.md 正文少于 500 行",
+            "全部本地引用存在"
+          ],
+          "expected": "Skill 结构合法、入口精简且引用可达",
+          "command": "python3 ~/.codex/skills/.system/skill-creator/scripts/quick_validate.py pola-skill-eval"
+        }
+      ],
+      "integration_cases": [],
+      "regression_cases": []
+    },
+    {
+      "id": "PSE-F2",
+      "name": "静态可用性与安全门禁",
+      "source_refs": ["requirements/2026-07-25-pola-skill-eval.md#验收标准"],
+      "acceptance_ids": ["A3"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "PSE-UT-F2-001",
+          "target": "pola-skill-eval/scripts/pola_skill_eval/inspection.py",
+          "scenario": "合格 Skill 静态检查",
+          "assertions": [
+            "状态为 pass",
+            "identity 和 inventory 完整",
+            "无静态 finding"
+          ],
+          "expected": "安全、结构完整的 fixture 通过静态门禁",
+          "command": "python3 pola-skill-eval/scripts/run_harness.py"
+        },
+        {
+          "id": "PSE-UT-F2-002",
+          "target": "pola-skill-eval/tests/test_inspection.py",
+          "scenario": "不合格 Skill、越界符号链接和非法 UTF-8",
+          "assertions": [
+            "缺字段、非法名称、缺引用和脚本语法错误被拒绝",
+            "宽泛递归删除被判为 critical",
+            "外部符号链接被拒绝",
+            "非法 UTF-8 返回 reject 而不崩溃"
+          ],
+          "expected": "所有结构、安全和解码异常产生可定位的 reject 证据",
+          "command": "python3 -m unittest discover -s pola-skill-eval/tests -p 'test_inspection.py' -v"
+        }
+      ],
+      "integration_cases": [],
+      "regression_cases": []
+    },
+    {
+      "id": "PSE-F3",
+      "name": "评测套件与 grader 合约",
+      "source_refs": ["requirements/2026-07-25-pola-skill-eval.md#验收标准"],
+      "acceptance_ids": ["A4"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "PSE-UT-F3-001",
+          "target": "pola-skill-eval/scripts/pola_skill_eval/suite.py",
+          "scenario": "release suite 正常与错误路径",
+          "assertions": [
+            "六类 release 覆盖通过",
+            "重复 ID、未知 grader、路径逃逸和缺失类别被拒绝",
+            "suite case 数量上限生效"
+          ],
+          "expected": "有效 release suite 通过，所有无效合约在执行前失败",
+          "command": "python3 -m unittest discover -s pola-skill-eval/tests -p 'test_suite.py' -v"
+        },
+        {
+          "id": "PSE-UT-F3-002",
+          "target": "pola-skill-eval/scripts/pola_skill_eval/grading.py",
+          "scenario": "确定性 grader 正反路径",
+          "assertions": [
+            "退出码、响应、JSON 路径和触发证据可组合",
+            "缺失 trace 不会被误当成 false"
+          ],
+          "expected": "grader 只根据真实可观察证据给出结果",
+          "command": "python3 -m unittest discover -s pola-skill-eval/tests -p 'test_grading.py' -v"
+        }
+      ],
+      "integration_cases": [],
+      "regression_cases": []
+    },
+    {
+      "id": "PSE-F4",
+      "name": "隔离执行与健壮性",
+      "source_refs": ["requirements/2026-07-25-pola-skill-eval.md#验收标准"],
+      "acceptance_ids": ["A5", "A6"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "PSE-UT-F4-001",
+          "target": "pola-skill-eval/scripts/pola_skill_eval/runner.py",
+          "scenario": "dry-run 和工作区边界",
+          "assertions": [
+            "dry-run 不启动 runner 和不创建输出目录",
+            "每个 arm/case/trial 使用唯一 workspace",
+            "输出目录不能位于候选 Skill 内",
+            "runner cwd 不能逃出 workspace",
+            "敏感环境变量名被拒绝"
+          ],
+          "expected": "未授权时零执行，授权后每个 job 保持路径与环境隔离",
+          "command": "python3 -m unittest discover -s pola-skill-eval/tests -p 'test_runner.py' -v"
+        },
+        {
+          "id": "PSE-UT-F4-002",
+          "target": "pola-skill-eval/tests/test_runner.py",
+          "scenario": "超时和流式输出上限",
+          "assertions": [
+            "超时进程被终止并标记 timeout",
+            "超量 stdout 被终止并标记 output_limit",
+            "关键执行失败产生 reject"
+          ],
+          "expected": "失控 runner 被及时终止并留下明确状态",
+          "command": "python3 pola-skill-eval/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [],
+      "regression_cases": []
+    },
+    {
+      "id": "PSE-F5",
+      "name": "配对可用性、触发与报告",
+      "source_refs": ["requirements/2026-07-25-pola-skill-eval.md#验收标准"],
+      "acceptance_ids": ["A5", "A7"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "PSE-UT-F5-001",
+          "target": "pola-skill-eval/scripts/pola_skill_eval/statistics.py",
+          "scenario": "统计和决策硬门禁",
+          "assertions": [
+            "候选相对基线提升独立展示",
+            "precision/recall/F1 可复算",
+            "软分数不能覆盖 critical grader"
+          ],
+          "expected": "报告保留相对提升、触发质量和不可覆盖的硬门禁",
+          "command": "python3 -m unittest discover -s pola-skill-eval/tests -p 'test_statistics.py' -v"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "PSE-IT-F5-001",
+          "target": "pola-skill-eval/scripts/run_harness.py",
+          "scenario": "26-run baseline/candidate 离线矩阵",
+          "assertions": [
+            "candidate_success=1.0",
+            "baseline_success=0.307692",
+            "uplift=0.692308",
+            "candidate_trigger_f1=1.0",
+            "JSON 和 Markdown 报告同时生成"
+          ],
+          "expected": "候选显著优于基线并形成 high-confidence pass",
+          "command": "python3 pola-skill-eval/scripts/run_harness.py"
+        }
+      ],
+      "regression_cases": []
+    },
+    {
+      "id": "PSE-F6",
+      "name": "效率与性能",
+      "source_refs": ["requirements/2026-07-25-pola-skill-eval.md#验收标准"],
+      "acceptance_ids": ["A8"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "PSE-UT-F6-001",
+          "target": "pola-skill-eval/scripts/run_harness.py",
+          "scenario": "静态与端到端性能预算",
+          "assertions": [
+            "静态检查 30 次 p50 小于 150 ms",
+            "静态检查 p95 小于 500 ms",
+            "端到端 harness 小于 15 秒",
+            "报告保留 duration、output、token、tool 和 cost 指标"
+          ],
+          "expected": "静态与集成路径均在明确预算内并保留资源证据",
+          "command": "python3 pola-skill-eval/scripts/run_harness.py"
+        }
+      ],
+      "integration_cases": [],
+      "regression_cases": []
+    },
+    {
+      "id": "PSE-F7",
+      "name": "工程与发布门禁",
+      "source_refs": ["requirements/2026-07-25-pola-skill-eval.md#验收标准"],
+      "acceptance_ids": ["A9", "A10", "A11", "A12"],
+      "risk": "P2",
+      "unit_cases": [
+        {
+          "id": "PSE-UT-F7-001",
+          "target": "pola-skill-eval",
+          "scenario": "编译、JSON、diff 和 secret 检查",
+          "assertions": [
+            "Python compileall 通过",
+            "全部 JSON 可解析",
+            "git diff --check 通过",
+            "没有运行缓存和真实 secret"
+          ],
+          "expected": "发布内容语法正确、无尾随错误、缓存或真实凭证",
+          "command": "python3 -m compileall -q pola-skill-eval/scripts pola-skill-eval/tests"
+        }
+      ],
+      "integration_cases": [
+        {
+          "id": "PSE-IT-F7-001",
+          "target": "PolarisW007/PolaSkills",
+          "scenario": "空 GitHub 仓库的隔离初始发布",
+          "assertions": [
+            "干净临时仓库只暂存 pola-skill-eval/",
+            "同时只加入本次匹配的 Pola 工程记录",
+            "不携带源工作树其它历史和脏改动",
+            "基于最新 main 发起独立 PR"
+          ],
+          "expected": "PR 只包含目标 Skill 子目录及匹配工程记录",
+          "command": "git diff --name-only origin/main...HEAD"
+        }
+      ],
+      "regression_cases": [
+        {
+          "id": "PSE-RT-F7-001",
+          "target": "/Users/wangchang/Desktop/WSYCursorCode/PolaSkills",
+          "scenario": "既有 Skill 不受影响",
+          "assertions": [
+            "本次未覆盖、移动或暂存现有 Skill",
+            "无 UI、登录态、数据库、上传下载或生产配置变更"
+          ],
+          "expected": "用户原有文件和功能路径保持不变",
+          "command": "git status --short"
+        }
+      ]
+    }
+  ],
+  "coverage": [
+    {"acceptance_id": "A1", "case_ids": ["PSE-UT-F1-001"]},
+    {"acceptance_id": "A2", "case_ids": ["PSE-UT-F1-001"]},
+    {"acceptance_id": "A3", "case_ids": ["PSE-UT-F2-001", "PSE-UT-F2-002"]},
+    {"acceptance_id": "A4", "case_ids": ["PSE-UT-F3-001", "PSE-UT-F3-002"]},
+    {"acceptance_id": "A5", "case_ids": ["PSE-UT-F4-001", "PSE-IT-F5-001"]},
+    {"acceptance_id": "A6", "case_ids": ["PSE-UT-F4-001", "PSE-UT-F4-002"]},
+    {"acceptance_id": "A7", "case_ids": ["PSE-UT-F5-001", "PSE-IT-F5-001"]},
+    {"acceptance_id": "A8", "case_ids": ["PSE-UT-F6-001"]},
+    {"acceptance_id": "A9", "case_ids": ["PSE-UT-F1-001", "PSE-UT-F7-001"]},
+    {"acceptance_id": "A10", "case_ids": ["PSE-UT-F7-001"]},
+    {"acceptance_id": "A11", "case_ids": ["PSE-IT-F7-001"]},
+    {"acceptance_id": "A12", "case_ids": ["PSE-RT-F7-001"]}
+  ]
+}

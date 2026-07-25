@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/pola-skill-eval/eval-report.schema.json",
+  "title": "Pola Skill Eval Report",
+  "type": "object",
+  "required": ["schema_version", "suite", "decision", "aggregate", "runs"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "suite": {
+      "type": "object",
+      "required": ["name", "mode", "cases"],
+      "properties": {
+        "name": {"type": "string"},
+        "mode": {"enum": ["quick", "standard", "release"]},
+        "cases": {"type": "integer", "minimum": 1}
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["status", "confidence", "reasons", "gates"],
+      "properties": {
+        "status": {
+          "enum": ["pass", "conditional", "inconclusive", "blocked", "reject"]
+        },
+        "confidence": {"enum": ["none", "low", "medium", "high"]},
+        "reasons": {"type": "array", "items": {"type": "string"}},
+        "gates": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "aggregate": {"type": "object"},
+    "runs": {"type": "array", "items": {"type": "object"}}
+  }
+}

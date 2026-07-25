@@ -4,6 +4,12 @@
 
 ## 当前交付
 
+- Skill 评测需求：`requirements/2026-07-25-pola-skill-eval.md`
+- Skill 评测 PRD：`specs/2026-07-25-pola-skill-eval-prd.md`
+- Skill 评测架构：`architecture/2026-07-25-pola-skill-eval-sdd.md`
+- Skill 评测测试矩阵：`delivery/pola-skill-eval/function_test_cases.json`
+- Skill 评测测试报告：`test-reports/2026-07-25-pola-skill-eval.md`
+- Skill 评测开发日志：`devlogs/2026-07-25-pola-skill-eval.md`
 - V3 私人模式需求：`requirements/2026-07-25-pola-wechat-public-account-reader-v3-private-mode.md`
 - V3 私人模式 PRD：`specs/2026-07-25-pola-wechat-public-account-reader-v3-private-mode-prd.md`
 - V3 私人模式架构：`architecture/2026-07-25-pola-wechat-public-account-reader-v3-private-mode-sdd.md`
