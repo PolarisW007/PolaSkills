@@ -17,6 +17,8 @@
 - GitHub 分支 `agent/pola-wechat-record-export-v2` 已推送；首个 commit：
   `c7d10e51d05c958cc30bc10dda9a731572a681fe`。
 - Draft PR：`https://github.com/PolarisW007/PolaSkills/pull/1`，目标 `main`。
+- 根据追加要求，将 PR 中的发布目录从 `pola-wechat-record-export/` 调整为
+  `pola-wechat-record-export-v2/`，并同步修正仓库根 README 的安装和文档链接。
 
 ## 不影响功能使用
 

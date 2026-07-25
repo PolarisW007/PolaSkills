@@ -19,3 +19,8 @@
 3. 有记录数、正文大小上限及只读连接。
 4. Codex 安装指向版本化源码，旧私密 key 文件得到安全保留。
 5. GitHub 子目录及使用说明可读取。
+
+## 追加发布要求
+
+- GitHub 仓库中的目录名称必须精确为 `pola-wechat-record-export-v2/`。
+- 技能内部名称继续使用 `pola-wechat-record-export`，保证现有 Codex 调用兼容。

@@ -1,6 +1,7 @@
-# pola-wechat-record-export
+# pola-wechat-record-export-v2
 
 面向 Codex、Claude Code、Cursor、Qoder 等 AgentSkills 兼容客户端的本机微信记录导出技能。
+GitHub 发布目录使用 V2 名称；Agent Skill 内部调用名保持为 `$pola-wechat-record-export`。
 
 ## 主要能力
 

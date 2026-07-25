@@ -5,7 +5,7 @@ Pola 系列 Agent Skills 发布仓库。当前公开：
 - [`pola-wechat-public-account-reader`](pola-wechat-public-account-reader/README.md)：通过纯公网来源批量
   监控微信公众号及其它媒体，支持 RSS/Atom、微信公众号公开 Album/Homepage、sitemap、已知文章
   URL 和远程 JSON API，并输出增量状态、来源健康、可信摘要素材和 JSON/Markdown 报告。
-- [`pola-wechat-record-export`](pola-wechat-record-export/README.md)：只读导出本机微信单聊、群聊和
+- [`pola-wechat-record-export-v2`](pola-wechat-record-export-v2/README.md)：只读导出本机微信单聊、群聊和
   本机已缓存朋友圈，生成统一 Markdown 时间线、NDJSON、CSV 与完整性 manifest。
 
 ## 快速安装
@@ -25,8 +25,8 @@ python3 scripts/install_hosts.py --host codex --apply
 本机微信记录导出技能可直接链接安装：
 
 ```bash
-ln -s "$PWD/pola-wechat-record-export" ~/.codex/skills/pola-wechat-record-export
-python3 pola-wechat-record-export/scripts/run_unified_harness.py
+ln -s "$PWD/pola-wechat-record-export-v2" ~/.codex/skills/pola-wechat-record-export
+python3 pola-wechat-record-export-v2/scripts/run_unified_harness.py
 ```
 
 ## 使用入口
@@ -37,9 +37,9 @@ python3 pola-wechat-record-export/scripts/run_unified_harness.py
 - 能力与案例：
   [`capabilities-and-examples.md`](pola-wechat-public-account-reader/references/capabilities-and-examples.md)
 - 运行与定时化：[`operations.md`](pola-wechat-public-account-reader/references/operations.md)
-- 本机记录导出说明：[`README.md`](pola-wechat-record-export/README.md)
-- 本机记录技能入口：[`SKILL.md`](pola-wechat-record-export/SKILL.md)
-- 统一记录字段：[`record-schema.md`](pola-wechat-record-export/references/record-schema.md)
+- 本机记录导出说明：[`README.md`](pola-wechat-record-export-v2/README.md)
+- 本机记录技能入口：[`SKILL.md`](pola-wechat-record-export-v2/SKILL.md)
+- 统一记录字段：[`record-schema.md`](pola-wechat-record-export-v2/references/record-schema.md)
 
 ## 安全说明
 

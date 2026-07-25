@@ -13,6 +13,7 @@
 - scoped secret scan 与 `git diff --check`：通过。
 - Codex 安装链接后的 Harness：7/7 通过。
 - GitHub branch push 与 Draft PR #1 创建成功；远端回读作为发布后最终门禁。
+- 目录重命名后重新运行 Harness、Skill validator、禁止产物检查及远端 tree 回读。
 
 ## 回归与残余风险
 
