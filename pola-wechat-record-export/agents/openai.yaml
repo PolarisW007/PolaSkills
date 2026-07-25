@@ -1,0 +1,6 @@
+interface:
+  display_name: "Pola 微信记录导出"
+  short_description: "只读导出单聊、群聊与本机缓存朋友圈"
+  default_prompt: "使用 $pola-wechat-record-export 在本机只读导出微信单聊、群聊和朋友圈，并生成 Markdown、NDJSON、CSV 与完整性清单。"
+policy:
+  allow_implicit_invocation: true
