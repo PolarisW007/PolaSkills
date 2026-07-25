@@ -1,0 +1,8 @@
+---
+name: Bad Skill
+extra: unsupported
+---
+
+# Bad Skill
+
+Read [a missing file](references/missing.md).

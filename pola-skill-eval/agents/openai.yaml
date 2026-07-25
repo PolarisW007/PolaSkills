@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pola Skill 评测"
+  short_description: "评测 Agent Skill 的可用性、健壮性与执行性能"
+  default_prompt: "Use $pola-skill-eval to inspect and benchmark this Agent Skill before release."

@@ -27,6 +27,15 @@
 - 联网 smoke test 只验证当前公网可达性，网络或上游阻断必须报告为 `source_unavailable`，不能伪装为通过或“无更新”。
 - Skill 修改后运行 Codex Skill 校验、Python 编译、单元测试和端到端 harness。
 
+## Skill 评测架构
+
+- `pola-skill-eval` 使用“静态门禁 + baseline/candidate/old 配对执行 + 确定性 grader + 性能统计”的证据链。
+- 动态评测默认 dry-run，只有显式 `--execute` 才运行外部 argv；禁止 shell 拼接。
+- 每个 case/arm/trial 必须使用隔离工作区，并设置并发、超时和累计输出上限。
+- 发布决策优先使用结构、安全和关键功能硬门禁；软评分不能覆盖致命失败。
+- 效率同时观察静态上下文体积、p50/p95、输出字节，以及 runner trace 可用时的 token、成本和工具调用。
+- Skill 评测报告必须区分 `pass`、`conditional`、`inconclusive`、`blocked` 与 `reject`，证据不足不能伪装为通过。
+
 ## 来源策略模式
 
 - `enforced` 是旧配置和通用示例的默认值：需要许可引用的启用来源缺少引用时联网前失败。

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Good Skill"
+  short_description: "A safe static-inspection fixture"
+  default_prompt: "Use $good-skill to run the bounded example workflow."
