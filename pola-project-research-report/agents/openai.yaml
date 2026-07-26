@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pola项目研究及报告"
+  short_description: "扫描项目证据，生成细节充分、精炼友好的研究报告与总目录"
+  default_prompt: "使用 $pola-project-research-report 扫描当前目录的项目，生成证据充分、清晰精炼的中文研究报告和总目录。"
